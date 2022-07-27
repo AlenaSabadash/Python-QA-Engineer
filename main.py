@@ -1,5 +1,15 @@
 import csv
 import json
+from dataclasses import dataclass, asdict
+
+
+@dataclass
+class UserDto:
+    name: str
+    gender: str
+    address: str
+    age: int
+    books: list[dict]
 
 
 def get_books():
@@ -13,11 +23,20 @@ def get_users():
 
 
 def save_result_file(chunks, users):
+    users_result = []
     for i, books in enumerate(chunks):
-        users[i]["books"] = books
+        user = UserDto(
+            name=users[i]["name"],
+            gender=users[i]["gender"],
+            address=users[i]["address"],
+            age=users[i]["age"],
+            books=books,
+        )
+
+        users_result.append(asdict(user))
 
     with open("./assets/result.json", "w") as f:
-        f.write(json.dumps(users))
+        f.write(json.dumps(users_result))
 
 
 def chunkify(lst, n):
