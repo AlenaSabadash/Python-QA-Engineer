@@ -1,73 +1,78 @@
 import pytest
-from enum import Enum
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.wait import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
 
-
-class PageUrl(str, Enum):
-    catalog = "index.php?route=product/category&path={}"
-    product = "index.php?route=product/product&path={}&product_id={}"
-    admin = "admin"
-    register = "index.php?route=account/register"
-
-
-class CatalogPath(Enum):
-    desktops = 20
-    laptops_n_notebooks = 18
-    components = 25
-    tablets = 57
-
-
-def test_check_main(browser, base_url):
-    browser.get(base_url)
-    browser.find_element(By.CSS_SELECTOR, "#logo")
-    browser.find_element(By.CSS_SELECTOR, "#search")
-    browser.find_element(By.CSS_SELECTOR, "#header-cart")
+from page_objects.AlertElement import AlertElement
+from page_objects.AuthPage import AuthPage
+from page_objects.MainPage import MainPage
+from page_objects.ProductCreatePage import ProductCreatePage
+from page_objects.ProductsListPage import ProductsListPage
+from page_objects.RegisterPage import RegisterPage
+from page_objects.RegisterSucsessPage import RegisterSuccessPage
+from page_objects.elements.MenuElement import MenuElement
+from page_objects.elements.ProductFilterElement import ProductFilterElement
+from test_data.enum.currency import CurrencyEnum
+from test_data.users import get_user
 
 
 @pytest.mark.parametrize(
-    "category,path",
+    "product_name,meta_tag,model",
     [
-        ("desktops", CatalogPath.desktops.value),
-        ("laptops & notebooks", CatalogPath.laptops_n_notebooks.value),
-        ("components", CatalogPath.components.value),
-        ("tablets", CatalogPath.tablets.value),
+        ("test_product", "test_tag", "test_model"),
     ],
 )
-def test_check_catalog(browser, base_url, category, path):
-    browser.get(f"{base_url}/{PageUrl.catalog.format(path)}")
-    browser.find_element(By.CSS_SELECTOR, "#column-left")
-    browser.find_element(By.CSS_SELECTOR, "#form-currency")
-    browser.find_element(By.CSS_SELECTOR, "#wishlist-total")
-    browser.find_element(By.CSS_SELECTOR, "#menu")
-    title_element = browser.find_element(By.CSS_SELECTOR, "#content").find_element(By.TAG_NAME, "h2")
-    assert title_element.text.lower() == category.lower()
+def test_add_product(browser, base_url, product_name, meta_tag, model):
+    AuthPage(browser, base_url).open().login(*get_user())
+    menu_element = MenuElement(browser)
+    menu_element.catalog_menu.click()
+    menu_element.products_submenu.click()
+
+    ProductsListPage(browser).add_new.click()
+    ProductCreatePage(browser).create(product_name, meta_tag, model)
+    ProductFilterElement(browser).filter(product_name)
+    assert ProductsListPage(browser).get_product_name() == product_name
 
 
-def test_check_product(browser, base_url):
-    browser.get(f"{base_url}/{PageUrl.product.format(20, 42)}")
-    browser.find_element(By.CSS_SELECTOR, "#button-cart")
-    browser.find_element(By.CSS_SELECTOR, "#content")
-    browser.find_element(By.CSS_SELECTOR, "#form-currency")
-    browser.find_element(By.CSS_SELECTOR, "#wishlist-total")
-    browser.find_element(By.CSS_SELECTOR, "#search")
+def test_delete_product(browser, base_url):
+    AuthPage(browser, base_url).open().login(*get_user())
+    menu_element = MenuElement(browser)
+    menu_element.catalog_menu.click()
+    menu_element.products_submenu.click()
+
+    products_list_page = ProductsListPage(browser)
+    products_list_page.checkbox.click()
+    products_list_page.delete_product.click()
+    products_list_page.alert.accept()
+
+    assert "Success" in AlertElement(browser).this.text
 
 
-def test_check_admin(browser, base_url):
-    browser.get(f"{base_url}/{PageUrl.admin}")
-    WebDriverWait(browser, 1).until(EC.visibility_of_element_located((By.CSS_SELECTOR, "#input-username")))
-    WebDriverWait(browser, 2).until(EC.visibility_of_element_located((By.CSS_SELECTOR, "#input-password")))
-    browser.find_element(By.CSS_SELECTOR, "#footer")
-    browser.find_element(By.CSS_SELECTOR, "#container")
-    browser.find_element(By.CSS_SELECTOR, "#header")
+@pytest.mark.parametrize(
+    "first_name, last_name, email, telephone, password",
+    [
+        ("first_name", "last_name", "email@mail.ru", "89878967898", "1234"),
+    ],
+)
+def test_register_new_user(
+    browser, base_url, first_name, last_name, email, telephone, password
+):
+    main_page = MainPage(browser, base_url).open()
+    main_page.my_account.click()
+    main_page.register.click()
+
+    RegisterPage(browser).register(first_name, last_name, email, telephone, password)
+
+    assert "Your Account Has Been Created!" in RegisterSuccessPage(browser).success.text
 
 
-def test_check_register(browser, base_url):
-    browser.get(f"{base_url}/{PageUrl.register}")
-    browser.find_element(By.CSS_SELECTOR, "#input-firstname")
-    browser.find_element(By.CSS_SELECTOR, "#input-lastname")
-    browser.find_element(By.CSS_SELECTOR, "#input-email")
-    browser.find_element(By.CSS_SELECTOR, "#input-password")
-    browser.find_element(By.CSS_SELECTOR, "#input-newsletter-yes")
-    browser.find_element(By.CSS_SELECTOR, "#input-newsletter-no")
+@pytest.mark.parametrize(
+    "currency",
+    [
+        CurrencyEnum.EUR,
+        CurrencyEnum.GBP,
+        CurrencyEnum.USD,
+    ],
+)
+def test_change_currency(browser, base_url, currency):
+    main_page = MainPage(browser, base_url).open()
+    main_page.currency_dropdown.click()
+    main_page.currency_item(currency.name).click()
+    assert currency.value in main_page.currency_dropdown.text
