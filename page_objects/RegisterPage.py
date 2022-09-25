@@ -1,3 +1,5 @@
+import allure
+
 from selenium.webdriver.common.by import By
 from page_objects.BasePage import BasePage
 
@@ -12,6 +14,7 @@ class RegisterPage(BasePage):
     PRIVACY_POLICY = (By.NAME, "agree")
     REGISTER_BUTTON = (By.CSS_SELECTOR, ".btn.btn-primary")
 
+    @allure.step("Регистрация нового пользователя: {first_name}, {last_name}, {email}, {telephone}, {password}")
     def register(self, first_name, last_name, email, telephone, password):
         self._input(self.element(self.FIRST_NAME), first_name)
         self._input(self.element(self.LAST_NAME), last_name)

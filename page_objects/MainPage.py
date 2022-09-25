@@ -29,5 +29,5 @@ class MainPage(BasePage):
         return self.element((By.NAME, name))
 
     def open(self):
-        self.driver.get(f"{self.url}/{self.path}")
+        self._open(f"{self.url}/{self.path}")
         return self

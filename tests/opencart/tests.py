@@ -1,4 +1,5 @@
 import pytest
+import allure
 
 from page_objects.AlertElement import AlertElement
 from page_objects.AuthPage import AuthPage
@@ -13,6 +14,7 @@ from test_data.enum.currency import CurrencyEnum
 from test_data.users import get_user
 
 
+@allure.title("Тест добавления нового продукта в каталог")
 @pytest.mark.parametrize(
     "product_name,meta_tag,model",
     [
@@ -31,6 +33,7 @@ def test_add_product(browser, base_url, product_name, meta_tag, model):
     assert ProductsListPage(browser).get_product_name() == product_name
 
 
+@allure.title("Тест удаления продукта из каталога")
 def test_delete_product(browser, base_url):
     AuthPage(browser, base_url).open().login(*get_user())
     menu_element = MenuElement(browser)
@@ -40,20 +43,20 @@ def test_delete_product(browser, base_url):
     products_list_page = ProductsListPage(browser)
     products_list_page.checkbox.click()
     products_list_page.delete_product.click()
-    products_list_page.alert.accept()
+    with allure.step("Принимаем алерт"):
+        products_list_page.alert.accept()
 
     assert "Success" in AlertElement(browser).this.text
 
 
+@allure.title("Тест регистрации нового пользователя")
 @pytest.mark.parametrize(
     "first_name, last_name, email, telephone, password",
     [
         ("first_name", "last_name", "email@mail.ru", "89878967898", "1234"),
     ],
 )
-def test_register_new_user(
-    browser, base_url, first_name, last_name, email, telephone, password
-):
+def test_register_new_user(browser, base_url, first_name, last_name, email, telephone, password):
     main_page = MainPage(browser, base_url).open()
     main_page.my_account.click()
     main_page.register.click()
@@ -63,6 +66,7 @@ def test_register_new_user(
     assert "Your Account Has Been Created!" in RegisterSuccessPage(browser).success.text
 
 
+@allure.title("Тест смены валюты")
 @pytest.mark.parametrize(
     "currency",
     [
