@@ -31,11 +31,13 @@ class ProcessReport:
         return sum([float(p[key]) for p in self.processes])
 
     def __get_most_usage(self, key):
-        return sorted(self.processes, key=lambda x: x[key], reverse=True)[0]["COMMAND"]
+        return sorted(self.processes, key=lambda x: float(x[key]), reverse=True)[0]["COMMAND"]
 
-    def result(self):
+    def save_file(self):
         out = sys.stdout
-        with open(f"{datetime.now().strftime('%d-%m-%Y-%H:%M')}-scan.txt", "w") as f:
+        filename = f"{datetime.now().strftime('%d-%m-%Y-%H:%M')}-scan.txt"
+
+        with open(filename, "w") as f:
             sys.stdout = f
 
             print("Отчёт о состоянии системы:")
@@ -53,6 +55,20 @@ class ProcessReport:
             print(f"Больше всего CPU использует: {self.__get_most_usage('%CPU')[:20]}")
 
         sys.stdout = out
+        return filename
+
+    @staticmethod
+    def print_out(filename):
+        orig_in = sys.stdin
+        with open(filename) as f:
+            sys.stdin = f
+            for line in sys.stdin:
+                print(line.rstrip("\n"))
+        sys.stdin = orig_in
+
+    def result(self):
+        filename = self.save_file()
+        self.print_out(filename)
 
 
 def main():
