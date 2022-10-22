@@ -1,0 +1,35 @@
+{
+    "requests_count": 1000,
+    "by_methods_count": {
+        "GET": 350,
+        "POST": 650
+    },
+    "most_requests_ips": [
+        "193.106.31.130",
+        "80.123.146.190",
+        "80.120.60.190"
+    ],
+    "slowest_requests": [
+        {
+            "method": "POST",
+            "request_path": "/administrator/index.php HTTP/1.0\"",
+            "ip": "193.106.31.130",
+            "datetime": "24/Sep/2019:16:46:59 +0200",
+            "spent_time": 9985
+        },
+        {
+            "method": "POST",
+            "request_path": "/administrator/index.php HTTP/1.0\"",
+            "ip": "193.106.31.130",
+            "datetime": "24/Sep/2019:05:30:41 +0200",
+            "spent_time": 9981
+        },
+        {
+            "method": "GET",
+            "request_path": "/apple-touch-icon-120x120-precomposed.png HTTP/1.1\"",
+            "ip": "91.113.11.120",
+            "datetime": "24/Sep/2019:18:02:44 +0200",
+            "spent_time": 9965
+        }
+    ]
+}
