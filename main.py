@@ -29,7 +29,10 @@ def start_server():
 
                 status = 200
                 if status_ := query_params.get("status"):
-                    status = int(status_[0])
+                    try:
+                        status = int(status_[0])
+                    except ValueError:
+                        conn.send(f"{status_[0]} невалидный статус\r\n".encode())
 
                 try:
                     response_status = HTTPStatus(status)
