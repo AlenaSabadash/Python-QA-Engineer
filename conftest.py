@@ -68,18 +68,19 @@ def browser(request, logger):
     drivers = request.config.getoption("--drivers")
     executor = request.config.getoption("--executor")
 
-    if browser == "chrome":
-        service = Service(executable_path=os.path.join(drivers, "chromedriver"))
-        driver = webdriver.Chrome(service=service)
-    elif browser == "yandex":
-        options = webdriver.ChromeOptions()
-        service = Service(executable_path=os.path.join(drivers, "yandexdriver"))
-        options.binary_location = "/usr/bin/yandex-browser"
-        driver = webdriver.Chrome(service=service, options=options)
-    elif browser == "firefox":
-        driver = webdriver.Firefox(executable_path=os.path.join(drivers, "geckodriver"))
-    elif browser == "safari":
-        driver = webdriver.Safari()
+    if executor == "local":
+        if browser == "chrome":
+            service = Service(executable_path=os.path.join(drivers, "chromedriver"))
+            driver = webdriver.Chrome(service=service)
+        elif browser == "yandex":
+            options = webdriver.ChromeOptions()
+            service = Service(executable_path=os.path.join(drivers, "yandexdriver"))
+            options.binary_location = "/usr/bin/yandex-browser"
+            driver = webdriver.Chrome(service=service, options=options)
+        elif browser == "firefox":
+            driver = webdriver.Firefox(executable_path=os.path.join(drivers, "geckodriver"))
+        elif browser == "safari":
+            driver = webdriver.Safari()
     else:
         driver = webdriver.Remote(
             command_executor="http://{}:4444/wd/hub".format(executor), desired_capabilities={"browserName": browser}
