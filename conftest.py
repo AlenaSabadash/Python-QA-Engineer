@@ -12,7 +12,7 @@ from selenium.webdriver.chrome.service import Service
 def pytest_addoption(parser):
     parser.addoption("--browser", default="chrome")
     parser.addoption("--drivers", default=os.path.expanduser("~/Downloads/drivers"))
-    parser.addoption("--url", default="http://localhost")
+    parser.addoption("--url", default="https://mail.ru")
     parser.addoption("--status_code", default=200, type=int)
     parser.addoption("--executor", action="store", default="127.0.0.1")
     parser.addoption("--log_level", action="store", default="DEBUG")

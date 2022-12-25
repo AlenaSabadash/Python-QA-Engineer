@@ -7,6 +7,7 @@ class MainPage(BasePage):
     REGISTER = (By.LINK_TEXT, "Register")
     CURRENCY = (By.CSS_SELECTOR, "#form-currency")
     EURO = (By.NAME, "EUR")
+    SUBMIT_BUTTON = (By.CSS_SELECTOR, ".search-arrow__button")
 
     def __init__(self, driver, url):
         super().__init__(driver)
@@ -24,6 +25,10 @@ class MainPage(BasePage):
     @property
     def currency_dropdown(self):
         return self.element(self.CURRENCY)
+
+    @property
+    def submit_button(self):
+        return self.element(self.SUBMIT_BUTTON)
 
     def currency_item(self, name):
         return self.element((By.NAME, name))
