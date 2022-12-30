@@ -7,7 +7,7 @@ from page_objects.MainPage import MainPage
 from page_objects.ProductCreatePage import ProductCreatePage
 from page_objects.ProductsListPage import ProductsListPage
 from page_objects.RegisterPage import RegisterPage
-from page_objects.RegisterSucsessPage import RegisterSuccessPage
+from page_objects.RegisterSuccessPage import RegisterSuccessPage
 from page_objects.elements.MenuElement import MenuElement
 from page_objects.elements.ProductFilterElement import ProductFilterElement
 from test_data.enum.currency import CurrencyEnum
