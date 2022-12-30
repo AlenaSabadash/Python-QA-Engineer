@@ -1,0 +1,6 @@
+SUCCESS_LOGIN_URL = "http://localhost/index.php?route=account/account"
+SUCCESSFULLY_CREATED_ACCOUNT = "Your Account Has Been Created!"
+ERROR_ON_ACCOUNT_CREATION = "Warning: You must agree to the Privacy Policy!"
+ERROR_ON_LOGIN = "Warning: No match for E-Mail Address and/or Password."
+SUCCESS_TEXT = "Success"
+EMPTY_CART_TEXT = "0 item(s)"
