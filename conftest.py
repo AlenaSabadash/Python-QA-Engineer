@@ -83,7 +83,8 @@ def browser(request, logger):
             driver = webdriver.Safari()
     else:
         driver = webdriver.Remote(
-            command_executor="http://{}:4444/wd/hub".format(executor), desired_capabilities={"browserName": browser}
+            command_executor="http://{}:4444/wd/hub".format(executor),
+            desired_capabilities={"browserName": browser},
         )
 
     driver.log_level = logger.level
